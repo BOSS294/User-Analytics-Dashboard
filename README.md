@@ -49,8 +49,8 @@ This **User Analytics Dashboard** is a real-time, interactive web application de
 To get started, simply clone this repository and open the `index.html` file in your browser:
 
 ```bash
-git clone https://github.com/MayankChawdhari/user-analytics-dashboard.git
-cd user-analytics-dashboard
+git clone https://github.com/BOSS294/User-Analytics-Dashboard.git
+cd User-Analytics-Dashboard
 open index.html
 ```
 
