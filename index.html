@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Analytics Dashboard</title>
+        <meta name="description"
+        content="Real-time User Analytics Dashboard created by Mayank Chawdhari. Track active and inactive users with interactive charts and dynamic data updates.">
+        <meta name="keywords"
+        content="User Analytics, Dashboard, Real-time Data, Mayank Chawdhari, Active Users, Inactive Users, Data Visualization">
+        <meta name="author" content="Mayank Chawdhari">
+        <meta name="robots" content="index, follow">
+        <meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <style>
+            body {
+                background-color: black;
+                color: white;
+                font-family: Arial, sans-serif;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .chart-container {
+                width: 70%;
+                height: 60%;
+                box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+                border-radius: 15px;
+                background-color: rgba(0, 0, 0, 0.7);
+                padding: 20px;
+                transition: transform 0.3s ease;
+                margin-bottom: 20px;
+            }
+
+            .counts-container {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                width: 90%;
+                font-size: 18px;
+                margin-bottom: 20px;
+                gap: 20px;
+            }
+
+            .count {
+                padding: 10px 20px;
+                border-radius: 10px;
+                border: 1px solid #fff;
+                background-color: rgba(255, 255, 255, 0.1);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width: auto;
+                box-sizing: border-box;
+                transition: background-color 0.3s ease;
+            }
+
+            .count:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+
+            .count .label {
+                font-weight: bold;
+                margin-right: 10px;
+                color: #ffffff;
+            }
+
+            .count .value {
+                font-size: 24px;
+                color: #00FF00;
+                font-weight: bold;
+            }
+
+            .countdown-container {
+                font-size: 20px;
+                color: #FF00FF;
+                margin-top: 20px;
+                display: flex;
+                align-items: center;
+            }
+
+            .refresh-button {
+                font-size: 24px;
+                cursor: pointer;
+                margin-left: 10px;
+                transition: transform 0.2s ease;
+            }
+
+            .refresh-button:hover {
+                transform: scale(1.1);
+            }
+
+            .section-heading {
+                text-align: center;
+                font-size: 32px;
+                font-weight: bold;
+                color: #ffffff;
+                text-transform: uppercase;
+                margin-bottom: 20px;
+                letter-spacing: 2px;
+                text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+                background: linear-gradient(90deg, rgba(0, 255, 0, 1), rgba(255, 0, 0, 1));
+                -webkit-background-clip: text;
+                background-clip: text;
+                display: inline-block;
+                transition: all 0.3s ease;
+            }
+
+            .section-heading:hover {
+                transform: scale(1.05);
+                text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.6);
+            }
+        </style>
+    </head>
+<body>
+    <h2 class="section-heading">User Analytics</h2>
+
+    <div class="chart-container">
+        <canvas id="userAnalyticsChart"></canvas>
+    </div>
+
+
+    <div class="counts-container">
+        <div class="count">
+            <div class="label">Active Users:</div>
+            <div class="value" id="active-users-count">250</div>
+        </div>
+        <div class="count">
+            <div class="label">Inactive Users:</div>
+            <div class="value" id="inactive-users-count">50</div>
+        </div>
+        <div class="count">
+            <div class="label">All Users:</div>
+            <div class="value" id="all-users-count">300</div>
+        </div>
+    </div>
+
+
+    <div class="countdown-container">
+        <span>Refreshing in: <span id="countdown">10</span> seconds</span>
+        <span class="material-icons refresh-button" onclick="refreshChart()">refresh</span>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('userAnalyticsChart').getContext('2d');
+        let activeUsers = 250;
+        let inactiveUsers = 50;
+        let allUsers = 300;
+
+
+        function getTimeLabel() {
+            const currentTime = new Date();
+            currentTime.setHours(currentTime.getHours() + 5);
+            currentTime.setMinutes(currentTime.getMinutes() + 30);
+            const hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12;
+            return `${formattedHours}:${minutes} ${period}`;
+        }
+
+        const userAnalyticsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [getTimeLabel(), getTimeLabel(), getTimeLabel(), getTimeLabel(), getTimeLabel()],
+                datasets: [
+                    {
+                        label: 'Active Users',
+                        data: [50, 100, 150, 200, activeUsers],
+                        borderColor: 'rgba(0, 255, 0, 1)',
+                        backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                    },
+                    {
+                        label: 'Inactive Users',
+                        data: [10, 30, 40, 60, inactiveUsers],
+                        borderColor: 'rgba(255, 0, 0, 1)',
+                        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                    },
+                    {
+                        label: 'All Users',
+                        data: [60, 130, 190, 260, allUsers],
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuad'
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'white',
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: 'white',
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: 'white',
+                        borderWidth: 1,
+                    }
+                }
+            }
+        });
+
+
+        function updateData() {
+            activeUsers += Math.floor(Math.random() * 10);
+            inactiveUsers -= Math.floor(Math.random() * 5);
+            allUsers = activeUsers + inactiveUsers;
+
+
+            userAnalyticsChart.data.datasets[0].data.push(activeUsers);
+            userAnalyticsChart.data.datasets[1].data.push(inactiveUsers);
+            userAnalyticsChart.data.datasets[2].data.push(allUsers);
+
+
+            userAnalyticsChart.data.datasets[0].data.shift();
+            userAnalyticsChart.data.datasets[1].data.shift();
+            userAnalyticsChart.data.datasets[2].data.shift();
+
+
+            document.getElementById('active-users-count').textContent = activeUsers;
+            document.getElementById('inactive-users-count').textContent = inactiveUsers;
+            document.getElementById('all-users-count').textContent = allUsers;
+
+
+            userAnalyticsChart.update();
+
+
+            userAnalyticsChart.data.labels.push(getTimeLabel());
+            userAnalyticsChart.data.labels.shift();
+        }
+
+
+        let countdownValue = 30;
+        const countdownElement = document.getElementById('countdown');
+        const countdownInterval = setInterval(function () {
+            countdownElement.textContent = countdownValue;
+            if (countdownValue === 0) {
+                updateData();
+                countdownValue = 30;
+            } else {
+                countdownValue--;
+            }
+        }, 1000);
+
+
+        function refreshChart() {
+            updateData();
+            countdownValue = 30;
+        }
+    </script>
+</body>
+
+</html>
